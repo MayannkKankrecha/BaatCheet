@@ -52,7 +52,7 @@ class _signuppageState extends State<signuppage> {
           fullname: "",
           profilePic: ""
       );
-      
+
   }
 
 
