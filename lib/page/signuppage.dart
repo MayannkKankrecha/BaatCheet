@@ -1,6 +1,8 @@
 import 'package:chat_application/model/user.dart';
 import 'package:chat_application/page/profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -34,17 +36,19 @@ class _signuppageState extends State<signuppage> {
     }
   }
 
-  void signup(String email,String password){
+  Future<void> signup(String email,String password) async {
     UserCredential? credential;
     UIHelper.showLoadingDialog(context, "Creating new account..");
     try {
-      credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
-    } on FirebaseAuthException catch(ex) {
+      credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: email, password: password);
+    } on FirebaseAuthException catch (ex) {
       Navigator.pop(context);
 
-      UIHelper.showAlertDialog(context, "An error occured", ex.message.toString());
+      UIHelper.showAlertDialog(
+          context, "An error occured", ex.message.toString());
     }
-    if(credential != null) {
+    if (credential != null) {
       String uid = credential.user!.uid;
       usermodel newUser = usermodel(
           uid: uid,
@@ -52,7 +56,8 @@ class _signuppageState extends State<signuppage> {
           fullname: "",
           profilePic: ""
       );
-
+      await FirebaseFirestore.instance.collection("user").doc("uid").set(newUser.toMap()).then((value) => print("new user created..."));
+    }
   }
 
 
@@ -116,9 +121,10 @@ class _signuppageState extends State<signuppage> {
                     SizedBox(height: 20),
                     CupertinoButton(
                       onPressed: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context){
-                          return profile();
-                        }));
+                        // // Navigator.push(context, MaterialPageRoute(builder: (context){
+                        // //   return profile();
+                        // }));
+                        checkValues();
                       },
                       color: Colors.blue[400],
                       child: Text("Create Account"),

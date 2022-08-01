@@ -1,7 +1,10 @@
 import 'package:chat_application/page/signuppage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../model/uihelper.dart';
 class loginpage extends StatefulWidget {
   const loginpage({Key? key}) : super(key: key);
 
@@ -10,6 +13,28 @@ class loginpage extends StatefulWidget {
 }
 
 class _loginpageState extends State<loginpage> {
+
+  TextEditingController emailcon= TextEditingController();
+  TextEditingController passwordcon= TextEditingController();
+  void checkValues() {
+    String email = emailcon.text.trim();
+    String password = passwordcon.text.trim();
+
+    if(email == "" || password == "") {
+      UIHelper.showAlertDialog(context, "Incomplete Data", "Please fill all the fields");
+    }
+    else {
+      // login(email, password);
+    }
+  }
+  // void login(String email, String password) async {
+  //   UserCredential? credential;
+  //   try{
+  //
+  //   }catch{
+  //
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -49,14 +74,16 @@ class _loginpageState extends State<loginpage> {
                     TextField(
                         decoration: InputDecoration(
                           labelText: "Email",
-                        )
+                        ),
+                      controller: emailcon,
                     ),
                     SizedBox(height: 20),
                     TextField(
                         obscureText: true,
                         decoration: InputDecoration(
                           labelText: "Password",
-                        )
+                        ),
+                      controller: passwordcon,
                     ),
                     SizedBox(height: 20),
                     CupertinoButton(
