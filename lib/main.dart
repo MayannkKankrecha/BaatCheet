@@ -1,31 +1,64 @@
-import 'package:chat_application/page/homepage.dart';
-import 'package:chat_application/page/loginpage.dart';
-import 'package:chat_application/page/profile.dart';
-import 'package:chat_application/page/signuppage.dart';
+import 'package:chat_application/models/FirebaseHelper.dart';
+import 'package:chat_application/models/UserModel.dart';
+import 'package:chat_application/pages/CompleteProfile.dart';
+import 'package:chat_application/pages/HomePage.dart';
+import 'package:chat_application/pages/LoginPage.dart';
+import 'package:chat_application/pages/SignUpPage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:uuid/uuid.dart';
 
-void main() async{
+var uuid = Uuid();
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const MyApp());
+
+  User? currentUser = FirebaseAuth.instance.currentUser;
+  if(currentUser != null) {
+    // Logged In
+    UserModel? thisUserModel = await FirebaseHelper.getUserModelById(currentUser.uid);
+    if(thisUserModel != null) {
+      runApp(MyAppLoggedIn(userModel: thisUserModel, firebaseUser: currentUser));
+    }
+    else {
+      runApp(MyApp());
+    }
+  }
+  else {
+    // Not logged in
+    runApp(MyApp());
+  }
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
+// Not Logged In
+class MyApp extends StatelessWidget {
+  const MyApp({ Key? key }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: loginpage(),
+      home: LoginPage(),
     );
   }
 }
 
+
+// Already Logged In
+class MyAppLoggedIn extends StatelessWidget {
+  final UserModel userModel;
+  final User firebaseUser;
+
+  const MyAppLoggedIn({Key? key, required this.userModel, required this.firebaseUser}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: HomePage(userModel: userModel, firebaseUser: firebaseUser),
+    );
+  }
+}

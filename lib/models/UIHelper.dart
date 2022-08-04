@@ -9,7 +9,7 @@ class UIHelper {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-
+            
             CircularProgressIndicator(),
 
             SizedBox(height: 30,),
@@ -22,11 +22,11 @@ class UIHelper {
     );
 
     showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) {
-          return loadingDialog;
-        }
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return loadingDialog;
+      }
     );
   }
 
